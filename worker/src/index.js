@@ -73,8 +73,15 @@ function normalizeItems(feedJson) {
       const link = item?.url || item?.link || item?.external_url || "";
       const date = item?.date_published || item?.date || item?.published || null;
       const author = item?.author?.name || item?.author || item?.authors?.[0]?.name || null;
-      const summary = item?.summary || item?.content_text || item?.description || "";
-      const image = item?.image || item?.image_url || item?.attachments?.[0]?.url || null;
+      const rawSummary = item?.summary || item?.content_text || item?.description || "";
+      const extractedPicXImage = extractPicXImageFromSummary(rawSummary);
+      const summary = extractedPicXImage ? removePicXFromSummary(rawSummary) : rawSummary;
+      const image =
+        item?.image ||
+        item?.image_url ||
+        item?.attachments?.[0]?.url ||
+        extractedPicXImage ||
+        null;
 
       return {
         title,
@@ -86,6 +93,27 @@ function normalizeItems(feedJson) {
       };
     })
     .filter((item) => item.title && item.link);
+}
+
+function extractPicXImageFromSummary(summary) {
+  if (!summary || typeof summary !== "string") return null;
+
+  // Matches both bare "pic.x.com/abc123" and prefixed "https://pic.x.com/abc123".
+  const match = summary.match(/(?:https?:\/\/)?(?:www\.)?pic\.x\.com\/[A-Za-z0-9_-]+/i);
+  if (!match) return null;
+
+  const rawUrl = match[0].replace(/^www\./i, "");
+  if (/^https?:\/\//i.test(rawUrl)) return rawUrl;
+  return `https://${rawUrl}`;
+}
+
+function removePicXFromSummary(summary) {
+  if (!summary || typeof summary !== "string") return summary;
+
+  return summary
+    .replace(/(?:https?:\/\/)?(?:www\.)?pic\.x\.com\/[A-Za-z0-9_-]+/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
 }
 
 function jsonResponse(body, status, extraHeaders = {}) {
