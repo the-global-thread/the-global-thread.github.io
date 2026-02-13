@@ -1,5 +1,5 @@
 const DEFAULT_FEED_URL = "https://rss.app/feeds/v1.1/Tmk5XvirrYE1vBco.json";
-const DEFAULT_TTL_SECONDS = 300;
+const DEFAULT_TTL_SECONDS = 600;
 const CACHE_KEY = "feed:irannews";
 
 export default {
