@@ -13,12 +13,12 @@
   break-inside: avoid;
 }
 
-.feed-item.size-tall .feed-item-image {
-  height: 320px;
+.feed-item.size-tall {
+  height: auto;
 }
 
-.feed-item.size-large .feed-item-image {
-  height: 280px;
+.feed-item.size-large {
+  height: auto;
 }
 
 .feed-item-content {
@@ -29,7 +29,7 @@
 
 .feed-item-image {
   width: 100%;
-  height: 210px;
+  height: auto;
   object-fit: contain;
   background: var(--image-bg);
 }
@@ -40,9 +40,6 @@
   font-size: 0.85rem;
   line-height: 1;
   color: var(--meta-ink);
-  /* background: var(--meta-bg); */
-  /* border-radius: 10px; */
-  /* padding: 8px 12px; */
   display: inline-flex;
   align-items: center;
   gap: 10px;
