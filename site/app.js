@@ -1,7 +1,7 @@
 (function bootstrapNewsApp() {
   const app = window.NewsApp || {};
   const { API_URL } = app.config;
-  const { itemsEl, updatedEl, statusEl, refreshBtn } = app.getElements();
+  const { itemsEl, updatedEl, statusEl, refreshBtn, themeToggleEl } = app.getElements();
 
   async function loadFeed(force) {
     const shouldForce = Boolean(force);
@@ -21,5 +21,6 @@
     loadFeed(true);
   });
 
+  app.initTheme(themeToggleEl);
   loadFeed(false);
 })();

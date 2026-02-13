@@ -18,7 +18,7 @@ window.NewsApp.renderFeed = function renderFeed(itemsEl, updatedEl, data) {
     .map((item) => {
       const mediaUrl = utils.getMediaUrl(item);
       const hasImage = mediaUrl !== "";
-      const meta = utils.buildMetaText(item);
+      const meta = utils.getMeta(item);
       const summaryText = utils.getSummaryText(item);
       const safeTitle = utils.escapeHtml(item.title || "Feed item");
       const sizeClass = utils.getSizeClass(item, hasImage);
@@ -27,8 +27,8 @@ window.NewsApp.renderFeed = function renderFeed(itemsEl, updatedEl, data) {
         <li class="feed-item ${sizeClass}">
           <div class="feed-item-content">
             ${hasImage ? `<img src="${utils.escapeHtml(mediaUrl)}" alt="${safeTitle}" class="feed-item-image" loading="lazy">` : ""}
-            ${meta ? `<div class="meta">${utils.escapeHtml(meta)}</div>` : ""}
             <p class="summary">${utils.escapeHtml(summaryText)}</p>
+            ${meta.authorText || meta.timeText ? `<div class="meta">${meta.authorText ? `<span class="meta-author">${utils.escapeHtml(meta.authorText)}</span>` : ""}${meta.authorText && meta.timeText ? `<span class="meta-dot">•</span>` : ""}${meta.timeText ? `<span class="meta-time">${utils.escapeHtml(meta.timeText)}</span>` : ""}</div>` : ""}
           </div>
         </li>
       `;

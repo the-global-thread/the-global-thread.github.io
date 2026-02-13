@@ -13,7 +13,7 @@ context.window.NewsApp = {};
 vm.createContext(context);
 vm.runInContext(source, context);
 
-const { getMediaUrl, getSizeClass, isPicXUrl, normalizeUrl } = context.window.NewsApp.feedUtils;
+const { formatRelativeTime, getMediaUrl, getMeta, getSizeClass, isPicXUrl, normalizeUrl } = context.window.NewsApp.feedUtils;
 
 test('normalizeUrl handles protocol-relative and pic.x.com shorthand', () => {
   assert.equal(normalizeUrl('//cdn.example.com/x.jpg'), 'https://cdn.example.com/x.jpg');
@@ -46,4 +46,17 @@ test('getSizeClass returns only allowed variants', () => {
   const value = getSizeClass({ link: 'https://x.com/1', date: '2026-01-01T00:00:00Z', summary: 'hello' }, true);
   assert.equal(variants.has(value), true);
   assert.equal(getSizeClass({}, false), '');
+});
+
+test('getMeta returns author and relative time text', () => {
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const meta = getMeta({ author: 'x.com', date: oneHourAgo });
+
+  assert.equal(meta.authorText, 'x.com');
+  assert.equal(/^[0-9]+h$/.test(meta.timeText), true);
+});
+
+test('formatRelativeTime handles recent timestamps', () => {
+  const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
+  assert.equal(formatRelativeTime(twoMinutesAgo), '2m');
 });

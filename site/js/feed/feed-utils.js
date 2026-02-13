@@ -49,11 +49,29 @@ function isPicXUrl(url) {
     }
 }
 
-function buildMetaText(item) {
-    const dateText = item.date ? new Date(item.date).toLocaleString() : "";
-    const authorText = item.author ? `By ${item.author}` : "";
+function getMeta(item) {
+    const date = item.date ? new Date(item.date) : null;
+    const hasValidDate = date instanceof Date && !Number.isNaN(date.getTime());
 
-    return [dateText, authorText].filter(Boolean).join(" · ");
+    return {
+      authorText: item.author ? item.author : "Unknown",
+      timeText: hasValidDate ? formatRelativeTime(date) : "",
+    };
+}
+
+function formatRelativeTime(date) {
+    const now = Date.now();
+    const diffMs = Math.max(0, now - date.getTime());
+    const minute = 60 * 1000;
+    const hour = 60 * minute;
+    const day = 24 * hour;
+
+    if (diffMs < minute) return "now";
+    if (diffMs < hour) return `${Math.floor(diffMs / minute)}m`;
+    if (diffMs < day) return `${Math.floor(diffMs / hour)}h`;
+    if (diffMs < 7 * day) return `${Math.floor(diffMs / day)}d`;
+
+    return date.toLocaleDateString();
 }
 
 function getSummaryText(item) {
@@ -70,6 +88,7 @@ window.NewsApp.feedUtils = {
   getMediaUrl,
   normalizeUrl,
   isPicXUrl,
-  buildMetaText,
+  getMeta,
+  formatRelativeTime,
   getSummaryText,
 };
