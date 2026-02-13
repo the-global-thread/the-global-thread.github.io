@@ -1,12 +1,19 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
 
-import {
-  getMediaUrl,
-  getSizeClass,
-  isPicXUrl,
-  normalizeUrl,
-} from '../js/feed/feed-utils.js';
+const source = fs.readFileSync(new URL('../js/feed/feed-utils.js', import.meta.url), 'utf8');
+const context = {
+  window: {},
+  URL,
+  Date,
+};
+context.window.NewsApp = {};
+vm.createContext(context);
+vm.runInContext(source, context);
+
+const { getMediaUrl, getSizeClass, isPicXUrl, normalizeUrl } = context.window.NewsApp.feedUtils;
 
 test('normalizeUrl handles protocol-relative and pic.x.com shorthand', () => {
   assert.equal(normalizeUrl('//cdn.example.com/x.jpg'), 'https://cdn.example.com/x.jpg');

@@ -1,5 +1,8 @@
-export async function fetchFeed(apiUrl, force = false) {
-  const url = force ? `${apiUrl}?refresh=1` : apiUrl;
+window.NewsApp = window.NewsApp || {};
+
+window.NewsApp.fetchFeed = async function fetchFeed(apiUrl, force) {
+  const shouldForce = Boolean(force);
+  const url = shouldForce ? `${apiUrl}?refresh=1` : apiUrl;
   const response = await fetch(url, { cache: "no-store" });
 
   if (!response.ok) {
@@ -7,4 +10,4 @@ export async function fetchFeed(apiUrl, force = false) {
   }
 
   return response.json();
-}
+};

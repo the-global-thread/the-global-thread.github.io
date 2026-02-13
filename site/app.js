@@ -1,22 +1,25 @@
-import { fetchFeed } from "./js/api/feed-api.js";
-import { API_URL } from "./js/config.js";
-import { getElements } from "./js/dom/elements.js";
-import { renderFeed, renderFeedError } from "./js/feed/render-feed.js";
+(function bootstrapNewsApp() {
+  const app = window.NewsApp || {};
+  const { API_URL } = app.config;
+  const { itemsEl, updatedEl, statusEl, refreshBtn } = app.getElements();
 
-const { itemsEl, updatedEl, statusEl, refreshBtn } = getElements();
+  async function loadFeed(force) {
+    const shouldForce = Boolean(force);
+    statusEl.textContent = shouldForce ? "Refreshing..." : "Loading...";
 
-async function loadFeed(force = false) {
-  statusEl.textContent = force ? "Refreshing…" : "Loading…";
-
-  try {
-    const data = await fetchFeed(API_URL, force);
-    renderFeed(itemsEl, updatedEl, data);
-    statusEl.textContent = "Updated";
-  } catch {
-    statusEl.textContent = "Failed to load";
-    renderFeedError(itemsEl);
+    try {
+      const data = await app.fetchFeed(API_URL, shouldForce);
+      app.renderFeed(itemsEl, updatedEl, data);
+      statusEl.textContent = "Updated";
+    } catch (error) {
+      statusEl.textContent = "Failed to load";
+      app.renderFeedError(itemsEl);
+    }
   }
-}
 
-refreshBtn.addEventListener("click", () => loadFeed(true));
-loadFeed(false);
+  refreshBtn.addEventListener("click", function handleRefreshClick() {
+    loadFeed(true);
+  });
+
+  loadFeed(false);
+})();

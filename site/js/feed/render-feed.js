@@ -1,31 +1,8 @@
-import {
-  buildMetaText,
-  escapeHtml,
-  getMediaUrl,
-  getSizeClass,
-  getSummaryText,
-} from "./feed-utils.js";
+window.NewsApp = window.NewsApp || {};
 
-function renderItem(item) {
-  const mediaUrl = getMediaUrl(item);
-  const hasImage = mediaUrl !== "";
-  const meta = buildMetaText(item);
-  const summaryText = getSummaryText(item);
-  const safeTitle = escapeHtml(item.title || "Feed item");
-  const sizeClass = getSizeClass(item, hasImage);
+window.NewsApp.renderFeed = function renderFeed(itemsEl, updatedEl, data) {
+  const utils = window.NewsApp.feedUtils;
 
-  return `
-    <li class="feed-item ${sizeClass}">
-      <div class="feed-item-content">
-        ${hasImage ? `<img src="${escapeHtml(mediaUrl)}" alt="${safeTitle}" class="feed-item-image" loading="lazy">` : ""}
-        ${meta ? `<div class="meta">${escapeHtml(meta)}</div>` : ""}
-        <p class="summary">${escapeHtml(summaryText)}</p>
-      </div>
-    </li>
-  `;
-}
-
-export function renderFeed(itemsEl, updatedEl, data) {
   updatedEl.textContent = data.generatedAt
     ? `Updated ${new Date(data.generatedAt).toLocaleString()}`
     : "";
@@ -37,9 +14,28 @@ export function renderFeed(itemsEl, updatedEl, data) {
     return;
   }
 
-  itemsEl.innerHTML = items.map(renderItem).join("");
-}
+  itemsEl.innerHTML = items
+    .map((item) => {
+      const mediaUrl = utils.getMediaUrl(item);
+      const hasImage = mediaUrl !== "";
+      const meta = utils.buildMetaText(item);
+      const summaryText = utils.getSummaryText(item);
+      const safeTitle = utils.escapeHtml(item.title || "Feed item");
+      const sizeClass = utils.getSizeClass(item, hasImage);
 
-export function renderFeedError(itemsEl) {
+      return `
+        <li class="feed-item ${sizeClass}">
+          <div class="feed-item-content">
+            ${hasImage ? `<img src="${utils.escapeHtml(mediaUrl)}" alt="${safeTitle}" class="feed-item-image" loading="lazy">` : ""}
+            ${meta ? `<div class="meta">${utils.escapeHtml(meta)}</div>` : ""}
+            <p class="summary">${utils.escapeHtml(summaryText)}</p>
+          </div>
+        </li>
+      `;
+    })
+    .join("");
+};
+
+window.NewsApp.renderFeedError = function renderFeedError(itemsEl) {
   itemsEl.innerHTML = '<li class="feed-item">Could not load feed.</li>';
-}
+};
