@@ -31,12 +31,16 @@ function renderFeed(data) {
       const dateText = item.date ? new Date(item.date).toLocaleString() : "";
       const authorText = item.author ? `By ${item.author}` : "";
       const meta = [dateText, authorText].filter(Boolean).join(" · ");
+      const hasImage = item.image && item.image.trim() !== "";
 
       return `
-        <li class="feed-item">
-          <a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a>
-          ${meta ? `<div class="meta">${meta}</div>` : ""}
-          ${item.summary ? `<p class="summary">${escapeHtml(item.summary)}</p>` : ""}
+        <li class="feed-item ${hasImage ? 'has-image' : ''}">
+          ${hasImage ? `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" class="feed-item-image" loading="lazy" onerror="this.style.display='none'; this.parentElement.classList.remove('has-image');">` : ''}
+          <div class="feed-item-content">
+            <a href="${item.link}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a>
+            ${meta ? `<div class="meta">${meta}</div>` : ""}
+            ${item.summary ? `<p class="summary">${escapeHtml(item.summary)}</p>` : ""}
+          </div>
         </li>
       `;
     })
