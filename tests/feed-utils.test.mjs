@@ -13,7 +13,16 @@ context.window.NewsApp = {};
 vm.createContext(context);
 vm.runInContext(source, context);
 
-const { formatRelativeTime, getMediaUrl, getMeta, getSizeClass, isPicXUrl, normalizeUrl } = context.window.NewsApp.feedUtils;
+const {
+  formatRelativeTime,
+  getMedia,
+  getMediaUrl,
+  getMeta,
+  getSizeClass,
+  getSummaryText,
+  isPicXUrl,
+  normalizeUrl,
+} = context.window.NewsApp.feedUtils;
 
 test('normalizeUrl handles protocol-relative and pic.x.com shorthand', () => {
   assert.equal(normalizeUrl('//cdn.example.com/x.jpg'), 'https://cdn.example.com/x.jpg');
@@ -41,6 +50,29 @@ test('getMediaUrl prioritizes item.image and falls back to pic.x.com link', () =
   assert.equal(getMediaUrl({ image: '', link: 'https://example.com' }), '');
 });
 
+test('getMediaUrl falls back to pic.x.com URL embedded in summary', () => {
+  const mediaUrl = getMediaUrl({
+    image: '',
+    link: 'https://x.com/foo/status/1',
+    summary: 'Some update pic.x.com/uwe1b8w4qb',
+  });
+
+  assert.equal(mediaUrl, 'https://pic.x.com/uwe1b8w4qb');
+});
+
+test('getMedia prefers video over image when both exist', () => {
+  const media = getMedia({
+    video: 'https://video.twimg.com/ext_tw_video/1/pu/vid/avc1/720x1280/test.mp4',
+    image: 'https://pbs.twimg.com/media/test.jpg',
+  });
+
+  assert.equal(media.type, 'video');
+  assert.equal(
+    media.url,
+    'https://video.twimg.com/ext_tw_video/1/pu/vid/avc1/720x1280/test.mp4',
+  );
+});
+
 test('getSizeClass returns only allowed variants', () => {
   const variants = new Set(['', 'size-large', 'size-tall']);
   const value = getSizeClass({ link: 'https://x.com/1', date: '2026-01-01T00:00:00Z', summary: 'hello' }, true);
@@ -59,4 +91,17 @@ test('getMeta returns author and relative time text', () => {
 test('formatRelativeTime handles recent timestamps', () => {
   const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
   assert.equal(formatRelativeTime(twoMinutesAgo), '2m');
+});
+
+test('getSummaryText removes embedded pic.x.com URL', () => {
+  const summary = getSummaryText({
+    summary:
+      'Foreign Minister Abbas Araghchi was scheduled to speak at the Council but his name was removed pic.x.com/l0aKxeXHhK',
+  });
+
+  assert.equal(summary.includes('pic.x.com/l0aKxeXHhK'), false);
+  assert.equal(
+    summary,
+    'Foreign Minister Abbas Araghchi was scheduled to speak at the Council but his name was removed',
+  );
 });

@@ -34,6 +34,13 @@
   background: var(--image-bg);
 }
 
+.feed-item-video {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  background: var(--image-bg);
+}
+
 .meta {
   margin-top: auto;
   width: fit-content;
@@ -58,7 +65,7 @@
   margin: 0;
   font-size: 1.18rem;
   line-height: 1.2;
-  color: #1a1a1a;
+  color: var(--ink);
 }
 
 .no-items {

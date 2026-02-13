@@ -25,13 +25,32 @@ function getSizeClass(item, hasImage) {
 }
 
 function getMediaUrl(item) {
+    const media = getMedia(item);
+    return media.url;
+}
+
+function getMedia(item) {
+    const video = item.video && item.video.trim() !== "" ? normalizeUrl(item.video.trim()) : "";
+    if (video) {
+      return { type: "video", url: video };
+    }
+
     const image = item.image && item.image.trim() !== "" ? normalizeUrl(item.image.trim()) : "";
-    if (image) return image;
+    if (image) {
+      return { type: "image", url: image };
+    }
+
+    const summaryImage = extractPicXUrl(item.summary || "");
+    if (summaryImage) {
+      return { type: "image", url: normalizeUrl(summaryImage) };
+    }
 
     const link = item.link && item.link.trim() !== "" ? normalizeUrl(item.link.trim()) : "";
-    if (isPicXUrl(link)) return link;
+    if (isPicXUrl(link)) {
+      return { type: "image", url: link };
+    }
 
-    return "";
+    return { type: "", url: "" };
 }
 
 function normalizeUrl(url) {
@@ -76,18 +95,37 @@ function formatRelativeTime(date) {
 
 function getSummaryText(item) {
     if (item.summary && item.summary.trim() !== "") {
-      return item.summary;
+      return removePicXUrl(item.summary);
     }
 
     return "Open article";
+}
+
+function extractPicXUrl(text) {
+    if (!text || typeof text !== "string") return "";
+
+    const match = text.match(/(?:https?:\/\/)?(?:www\.)?pic\.x\.com\/[A-Za-z0-9_-]+/i);
+    return match ? match[0].replace(/^www\./i, "") : "";
+}
+
+function removePicXUrl(text) {
+    if (!text || typeof text !== "string") return text;
+
+    return text
+      .replace(/(?:https?:\/\/)?(?:www\.)?pic\.x\.com\/[A-Za-z0-9_-]+/gi, "")
+      .replace(/\s{2,}/g, " ")
+      .trim();
 }
 
 window.NewsApp.feedUtils = {
   escapeHtml,
   getSizeClass,
   getMediaUrl,
+  getMedia,
   normalizeUrl,
   isPicXUrl,
+  extractPicXUrl,
+  removePicXUrl,
   getMeta,
   formatRelativeTime,
   getSummaryText,
