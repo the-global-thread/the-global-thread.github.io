@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>IranNews</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Live RSS feed</p>
+          <h1>IranNews</h1>
+          <p class="subtitle">Fast, curated headlines from your Twitter list.</p>
+        </div>
+        <div class="hero-actions">
+          <button id="refresh">Refresh</button>
+          <span id="status">Loading…</span>
+        </div>
+      </header>
+
+      <section class="feed">
+        <div class="feed-meta">
+          <h2>Latest</h2>
+          <p id="updated"></p>
+        </div>
+        <ul id="items" class="feed-list"></ul>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+name = "irannews-api"
+main = "src/index.js"
+compatibility_date = "2026-02-13"
+
+# Replace with your account_id or set via `wrangler whoami`.
+account_id = "54af09796428ca6fd7c0b5355f1b5734"
+
+# Optional: route if you want a custom domain for the API.
+# route = { pattern = "api.yourdomain.com/*", zone_name = "yourdomain.com" }
+
+[[kv_namespaces]]
+binding = "FEED_CACHE"
+# Create with: `npx wrangler kv:namespace create FEED_CACHE`
+# Then paste the id below.
+id = "45a326d48b714566981106cd913b282c"
+
+[vars]
+FEED_URL = "https://rss.app/feeds/v1.1/Tmk5XvirrYE1vBco.json"
+CACHE_TTL_SECONDS = "300"
