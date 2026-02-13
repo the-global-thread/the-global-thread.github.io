@@ -1,0 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;500;600&display=swap");
+
+:root {
+  --bg: #e7e2d9;
+  --card: #f7f3ec;
+  --ink: #151515;
+  --muted: #505050;
+  --meta-bg: #efebe3;
+  --meta-ink: #5f5a50;
+  --image-bg: #e1ddd5;
+}
+
+:root[data-theme="dark"] {
+  --bg: #13161b;
+  --card: #1a1f27;
+  --ink: #e8edf5;
+  --muted: #9aa5b5;
+  --meta-bg: #111722;
+  --meta-ink: #8f9aae;
+  --image-bg: #222938;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Source Sans 3", "Segoe UI", Arial, sans-serif;
+}

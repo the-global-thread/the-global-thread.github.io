@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Iran News</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <p class="brand">Iran News</p>
+        <div class="masthead-actions">
+          <button id="theme-toggle" type="button" aria-label="Toggle color theme">Dark</button>
+          <button id="refresh">Refresh</button>
+          <span id="status">Loading…</span>
+        </div>
+      </header>
+
+      <section class="daily-summery" aria-label="Daily Summery placeholder">
+        <img
+          class="daily-summery-image"
+          src="https://placehold.co/640x360/d9d6ce/1f1f1f?text=Daily+Summery"
+          alt="Daily Summery placeholder"
+          loading="lazy"
+        />
+        <div class="daily-summery-content">
+          <p class="daily-summery-kicker">Daily Summery</p>
+          <p class="daily-summery-text">
+            Placeholder for a daily editorial brief. This area can contain a curated highlight of the day, key context, and top takeaways.
+          </p>
+        </div>
+      </section>
+
+      <section class="feed">
+        <div class="feed-meta">
+          <p id="updated"></p>
+        </div>
+        <ul id="items" class="feed-list"></ul>
+      </section>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/dom/elements.js"></script>
+    <script src="js/theme/theme.js"></script>
+    <script src="js/api/feed-api.js"></script>
+    <script src="js/feed/feed-utils.js"></script>
+    <script src="js/feed/render-feed.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
