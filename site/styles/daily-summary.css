@@ -1,0 +1,46 @@
+.daily-summery {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 18px;
+  align-items: stretch;
+  margin: 10px 0 20px;
+}
+
+.daily-summery-image {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+}
+
+.daily-summery-content {
+  background: var(--card);
+  padding: 22px;
+  display: grid;
+  align-content: center;
+  gap: 12px;
+}
+
+.daily-summery-kicker {
+  margin: 0;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.daily-summery-text {
+  margin: 0;
+  font-size: 1.2rem;
+  line-height: 1.25;
+}
+
+@media (max-width: 980px) {
+  .daily-summery {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .daily-summery-image {
+    height: 230px;
+  }
+}

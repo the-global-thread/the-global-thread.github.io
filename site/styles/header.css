@@ -1,0 +1,44 @@
+.masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.brand {
+  margin: 0;
+  font-family: "Libre Baskerville", Georgia, serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.masthead-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#refresh {
+  border: 0;
+  background: #1f1f1f;
+  color: #fff;
+  padding: 8px 14px;
+  font-size: 0.92rem;
+  font-family: "Libre Baskerville", Georgia, serif;
+  cursor: pointer;
+}
+
+#status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 680px) {
+  .masthead {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

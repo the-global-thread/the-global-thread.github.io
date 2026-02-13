@@ -1,0 +1,19 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap");
+
+:root {
+  --bg: #e7e2d9;
+  --card: #f7f3ec;
+  --ink: #151515;
+  --muted: #505050;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Cormorant Garamond", Georgia, serif;
+}
