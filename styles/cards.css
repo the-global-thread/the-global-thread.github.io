@@ -4,6 +4,7 @@
   padding: 0;
   column-count: 3;
   column-gap: 16px;
+  direction: rtl;
 }
 
 .feed-item {
@@ -11,6 +12,7 @@
   padding: 14px;
   margin: 0 0 16px;
   break-inside: avoid;
+  direction: ltr;
 }
 
 .feed-item.size-tall {
