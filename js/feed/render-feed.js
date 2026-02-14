@@ -1,7 +1,8 @@
 window.NewsApp = window.NewsApp || {};
 
-window.NewsApp.renderFeed = function renderFeed(itemsEl, updatedEl, data) {
+window.NewsApp.renderFeed = function renderFeed(itemsEl, updatedEl, data, options = {}) {
   const utils = window.NewsApp.feedUtils;
+  const { append = false } = options;
 
   updatedEl.textContent = data.generatedAt
     ? `Updated ${new Date(data.generatedAt).toLocaleString()}`
@@ -10,11 +11,13 @@ window.NewsApp.renderFeed = function renderFeed(itemsEl, updatedEl, data) {
   const items = Array.isArray(data.items) ? data.items : [];
 
   if (!items.length) {
-    itemsEl.innerHTML = '<li class="no-items">No additional items.</li>';
+    if (!append) {
+      itemsEl.innerHTML = '<li class="no-items">No additional items.</li>';
+    }
     return;
   }
 
-  itemsEl.innerHTML = items
+  const markup = items
     .map((item) => {
       const media = utils.getMedia(item);
       const hasMedia = media.url !== "";
@@ -42,6 +45,17 @@ window.NewsApp.renderFeed = function renderFeed(itemsEl, updatedEl, data) {
       `;
     })
     .join("");
+
+  if (append) {
+    const emptyState = itemsEl.querySelector(".no-items");
+    if (emptyState) {
+      itemsEl.innerHTML = "";
+    }
+    itemsEl.insertAdjacentHTML("beforeend", markup);
+    return;
+  }
+
+  itemsEl.innerHTML = markup;
 };
 
 window.NewsApp.renderFeedError = function renderFeedError(itemsEl) {
