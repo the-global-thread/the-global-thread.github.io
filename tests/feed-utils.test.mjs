@@ -14,6 +14,7 @@ vm.createContext(context);
 vm.runInContext(source, context);
 
 const {
+  dedupeItemsByLink,
   formatRelativeTime,
   getMedia,
   getMediaUrl,
@@ -23,6 +24,21 @@ const {
   isPicXUrl,
   normalizeUrl,
 } = context.window.NewsApp.feedUtils;
+
+test('dedupeItemsByLink removes duplicates and skips existing keys', () => {
+  const existing = new Set(['https://x.com/existing/status/1']);
+  const items = [
+    { link: 'https://x.com/a/status/1', summary: 'first' },
+    { link: 'https://x.com/a/status/1', summary: 'duplicate' },
+    { link: 'https://x.com/existing/status/1', summary: 'already rendered' },
+    { link: 'https://x.com/b/status/2', summary: 'second' },
+  ];
+
+  const deduped = dedupeItemsByLink(items, existing);
+  assert.equal(deduped.length, 2);
+  assert.equal(deduped[0].link, 'https://x.com/a/status/1');
+  assert.equal(deduped[1].link, 'https://x.com/b/status/2');
+});
 
 test('normalizeUrl handles protocol-relative and pic.x.com shorthand', () => {
   assert.equal(normalizeUrl('//cdn.example.com/x.jpg'), 'https://cdn.example.com/x.jpg');

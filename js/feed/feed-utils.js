@@ -40,17 +40,36 @@ function getMedia(item) {
     return { type: "image", url: image };
   }
 
-  // const summaryImage = extractPicXUrl(item.summary || "");
-  // if (summaryImage) {
-  //   return { type: "image", url: normalizeUrl(summaryImage) };
-  // }
+  const summaryImage = extractPicXUrl(item.summary || "");
+  if (summaryImage) {
+    return { type: "image", url: normalizeUrl(summaryImage) };
+  }
 
-  // const link = item.link && item.link.trim() !== "" ? normalizeUrl(item.link.trim()) : "";
-  // if (isPicXUrl(link)) {
-  //   return { type: "image", url: link };
-  // }
+  const link = item.link && item.link.trim() !== "" ? normalizeUrl(item.link.trim()) : "";
+  if (isPicXUrl(link)) {
+    return { type: "image", url: link };
+  }
 
   return { type: "", url: "" };
+}
+
+function getItemKey(item) {
+  if (!item || typeof item !== "object") return "";
+  if (typeof item.link === "string" && item.link.trim() !== "") return item.link.trim();
+  if (typeof item.title === "string" && item.title.trim() !== "") return item.title.trim();
+  if (typeof item.date === "string" && item.date.trim() !== "") return item.date.trim();
+  if (typeof item.summary === "string" && item.summary.trim() !== "") return item.summary.trim();
+  return "";
+}
+
+function dedupeItemsByLink(items, existingKeys = new Set()) {
+  const seen = new Set(existingKeys);
+  return (Array.isArray(items) ? items : []).filter((item) => {
+    const key = getItemKey(item);
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function normalizeUrl(url) {
@@ -129,4 +148,6 @@ window.NewsApp.feedUtils = {
   getMeta,
   formatRelativeTime,
   getSummaryText,
+  getItemKey,
+  dedupeItemsByLink,
 };

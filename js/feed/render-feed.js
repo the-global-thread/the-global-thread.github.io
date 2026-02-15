@@ -9,15 +9,21 @@ window.NewsApp.renderFeed = function renderFeed(itemsEl, updatedEl, data, option
     : "";
 
   const items = Array.isArray(data.items) ? data.items : [];
+  const existingKeys = new Set(
+    Array.from(itemsEl.querySelectorAll("[data-item-key]")).map((el) => el.getAttribute("data-item-key")),
+  );
+  const visibleItems = append
+    ? utils.dedupeItemsByLink(items, existingKeys)
+    : utils.dedupeItemsByLink(items);
 
-  if (!items.length) {
+  if (!visibleItems.length) {
     if (!append) {
       itemsEl.innerHTML = '<li class="no-items">No additional items.</li>';
     }
     return;
   }
 
-  const markup = items
+  const markup = visibleItems
     .map((item) => {
       const media = utils.getMedia(item);
       const hasMedia = media.url !== "";
@@ -25,6 +31,7 @@ window.NewsApp.renderFeed = function renderFeed(itemsEl, updatedEl, data, option
       const summaryText = utils.getSummaryText(item);
       const safeTitle = utils.escapeHtml(item.title || "Feed item");
       const sizeClass = utils.getSizeClass(item, hasMedia);
+      const itemKey = utils.escapeHtml(utils.getItemKey(item));
       const mediaMarkup =
         media.type === "video"
           ? `<video class="feed-item-video" controls playsinline preload="metadata">
@@ -35,7 +42,7 @@ window.NewsApp.renderFeed = function renderFeed(itemsEl, updatedEl, data, option
             : "";
 
       return `
-        <li class="feed-item ${sizeClass}">
+        <li class="feed-item ${sizeClass}" data-item-key="${itemKey}">
           <div class="feed-item-content">
             ${mediaMarkup}
             <p class="summary">${utils.escapeHtml(summaryText)}</p>
