@@ -40,11 +40,6 @@ function getMedia(item) {
     return { type: "image", url: image };
   }
 
-  const summaryImage = extractPicXUrl(item.summary || "");
-  if (summaryImage) {
-    return { type: "image", url: normalizeUrl(summaryImage) };
-  }
-
   const link = item.link && item.link.trim() !== "" ? normalizeUrl(item.link.trim()) : "";
   if (isPicXUrl(link)) {
     return { type: "image", url: link };

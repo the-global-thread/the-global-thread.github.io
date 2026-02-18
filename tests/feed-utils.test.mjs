@@ -66,14 +66,14 @@ test('getMediaUrl prioritizes item.image and falls back to pic.x.com link', () =
   assert.equal(getMediaUrl({ image: '', link: 'https://example.com' }), '');
 });
 
-test('getMediaUrl falls back to pic.x.com URL embedded in summary', () => {
+test('getMediaUrl does not use pic.x.com URL embedded in summary', () => {
   const mediaUrl = getMediaUrl({
     image: '',
     link: 'https://x.com/foo/status/1',
     summary: 'Some update pic.x.com/uwe1b8w4qb',
   });
 
-  assert.equal(mediaUrl, 'https://pic.x.com/uwe1b8w4qb');
+  assert.equal(mediaUrl, '');
 });
 
 test('getMedia prefers video over image when both exist', () => {
