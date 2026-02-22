@@ -1,10 +1,12 @@
 (function bootstrapAdmin() {
   const TOKEN_STORAGE_KEY = "iran-news-admin-token";
+  const ITEMS_PAGE_SIZE = 50;
   const config = window.NewsApp?.config || {};
   const apiOrigin = new URL(config.API_URL || window.location.origin).origin;
   const adminBase = `${apiOrigin}/api/admin`;
 
   const authFormEl = document.getElementById("auth-form");
+  const authPanelEl = document.getElementById("auth-panel");
   const adminTokenEl = document.getElementById("admin-token");
   const authStatusEl = document.getElementById("auth-status");
   const formEl = document.getElementById("source-form");
@@ -15,7 +17,12 @@
   const itemsRefreshEl = document.getElementById("items-refresh");
   const itemsStatusEl = document.getElementById("items-status");
   const itemsBodyEl = document.getElementById("items-body");
+  const itemsPrevEl = document.getElementById("items-prev");
+  const itemsNextEl = document.getElementById("items-next");
+  const itemsPageIndicatorEl = document.getElementById("items-page-indicator");
   let adminToken = sessionStorage.getItem(TOKEN_STORAGE_KEY) || "";
+  let currentItemsPage = 1;
+  let totalItemsPages = 1;
 
   function setAuthStatus(text) {
     authStatusEl.textContent = text;
@@ -27,6 +34,19 @@
 
   function setItemsStatus(text) {
     itemsStatusEl.textContent = text;
+  }
+
+  function setAuthPanelVisible(visible) {
+    if (!authPanelEl) return;
+    authPanelEl.style.display = visible ? "" : "none";
+  }
+
+  function updatePager(payload) {
+    currentItemsPage = Number(payload?.page || 1);
+    totalItemsPages = Number(payload?.totalPages || 1);
+    itemsPageIndicatorEl.textContent = `Page ${currentItemsPage} of ${totalItemsPages}`;
+    itemsPrevEl.disabled = !payload?.hasPrev;
+    itemsNextEl.disabled = !payload?.hasNext;
   }
 
   async function requestJson(path, options = {}) {
@@ -48,6 +68,7 @@
       if (response.status === 401) {
         adminToken = "";
         sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+        setAuthPanelVisible(true);
         setAuthStatus("Unauthorized. Enter a valid admin token.");
       }
       throw new Error(message);
@@ -151,16 +172,17 @@
     }
   }
 
-  async function loadItems() {
+  async function loadItems(page = 1) {
     if (!adminToken) {
       setItemsStatus("Admin token required.");
       return;
     }
     try {
       setItemsStatus("Loading DB items...");
-      const payload = await requestJson("/items?limit=100");
+      const payload = await requestJson(`/items?limit=${ITEMS_PAGE_SIZE}&page=${page}`);
       renderItems(payload.items || []);
-      setItemsStatus(`Loaded ${payload.count || 0} item(s).`);
+      updatePager(payload);
+      setItemsStatus(`Loaded ${payload.count || 0} item(s) out of ${payload.total || 0}.`);
     } catch (error) {
       setItemsStatus(`Failed to load DB items: ${error.message}`);
     }
@@ -201,23 +223,37 @@
       const payload = await requestJson("/sources");
       renderSources(payload.sources || []);
       setAuthStatus("Admin unlocked for this tab session.");
+      setAuthPanelVisible(false);
       setSourceStatus(`Loaded ${payload.sources?.length || 0} source(s).`);
-      await loadItems();
+      await loadItems(1);
     } catch (error) {
       setAuthStatus(`Auth failed: ${error.message}`);
     }
   });
 
   sourcesRefreshEl.addEventListener("click", loadSources);
-  itemsRefreshEl.addEventListener("click", loadItems);
+  itemsRefreshEl.addEventListener("click", function handleItemsRefresh() {
+    loadItems(currentItemsPage);
+  });
+  itemsPrevEl.addEventListener("click", function handleItemsPrev() {
+    if (currentItemsPage <= 1) return;
+    loadItems(currentItemsPage - 1);
+  });
+  itemsNextEl.addEventListener("click", function handleItemsNext() {
+    if (currentItemsPage >= totalItemsPages) return;
+    loadItems(currentItemsPage + 1);
+  });
 
   if (adminToken) {
-    setAuthStatus("Existing admin session token detected.");
+    setAuthPanelVisible(false);
     loadSources();
-    loadItems();
+    loadItems(1);
   } else {
+    setAuthPanelVisible(true);
     setAuthStatus("Enter admin token to access this panel.");
     setSourceStatus("Admin token required.");
     setItemsStatus("Admin token required.");
+    itemsPrevEl.disabled = true;
+    itemsNextEl.disabled = true;
   }
 })();

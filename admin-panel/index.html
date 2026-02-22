@@ -16,7 +16,7 @@
         <a class="back-link" href="../index.html">Back to Feed</a>
       </header>
 
-      <section class="panel">
+      <section id="auth-panel" class="panel">
         <h2>Admin Auth</h2>
         <form id="auth-form" class="source-form">
           <input id="admin-token" name="admin-token" type="password" placeholder="Enter admin token" required />
@@ -60,6 +60,11 @@
             </thead>
             <tbody id="items-body"></tbody>
           </table>
+        </div>
+        <div class="pager" aria-label="Database item pagination">
+          <button id="items-prev" type="button">Prev</button>
+          <p id="items-page-indicator" class="pager-indicator">Page 1 of 1</p>
+          <button id="items-next" type="button">Next</button>
         </div>
       </section>
     </main>

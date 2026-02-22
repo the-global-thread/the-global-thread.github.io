@@ -161,6 +161,26 @@ td a {
   color: var(--accent);
 }
 
+.pager {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.pager-indicator {
+  margin: 0;
+  min-width: 120px;
+  text-align: center;
+  color: var(--muted);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (max-width: 780px) {
   .admin-header {
     flex-direction: column;

@@ -1,3 +1,3 @@
 /api/* https://irannews-api.mahdibnd.workers.dev/:splat 200
-/admin /admin-panel/ 200
+/admin /admin-panel/ 301
 /admin-panel /admin-panel/ 200
