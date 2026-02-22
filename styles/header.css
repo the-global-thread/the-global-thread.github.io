@@ -21,7 +21,8 @@
 }
 
 #theme-toggle,
-#refresh {
+#refresh,
+.admin-link {
   border: 0;
   background: #1f1f1f;
   color: #fff;
@@ -29,6 +30,7 @@
   font-size: 0.92rem;
   font-family: "Libre Baskerville", Georgia, serif;
   cursor: pointer;
+  text-decoration: none;
 }
 
 #theme-toggle {

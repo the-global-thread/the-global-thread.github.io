@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Iran News Admin</title>
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body>
+    <main class="admin-shell">
+      <header class="admin-header">
+        <div>
+          <p class="eyebrow">Dark Mode Admin</p>
+          <h1>RSS Sources</h1>
+        </div>
+        <a class="back-link" href="index.html">Back to Feed</a>
+      </header>
+
+      <section class="panel">
+        <h2>Admin Auth</h2>
+        <form id="auth-form" class="source-form">
+          <input id="admin-token" name="admin-token" type="password" placeholder="Enter admin token" required />
+          <button type="submit">Unlock</button>
+        </form>
+        <p id="auth-status" class="status"></p>
+      </section>
+
+      <section class="panel">
+        <h2>Add Source</h2>
+        <form id="source-form" class="source-form">
+          <input id="source-url" name="source-url" type="url" placeholder="https://example.com/feed.xml" required />
+          <button type="submit">Add</button>
+        </form>
+        <p id="source-status" class="status"></p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title-row">
+          <h2>Configured Sources</h2>
+          <button id="sources-refresh" type="button">Refresh</button>
+        </div>
+        <ul id="sources-list" class="sources-list"></ul>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title-row">
+          <h2>Latest DB Items</h2>
+          <button id="items-refresh" type="button">Reload</button>
+        </div>
+        <p id="items-status" class="status"></p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Published</th>
+                <th>Source</th>
+                <th>Title</th>
+                <th>Link</th>
+              </tr>
+            </thead>
+            <tbody id="items-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <script src="js/config.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>
