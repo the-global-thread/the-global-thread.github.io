@@ -108,6 +108,10 @@ function formatRelativeTime(date) {
 }
 
 function getSummaryText(item) {
+  if (item.translation && item.translation.trim() !== "") {
+    return item.translation.trim();
+  }
+
   if (item.summary && item.summary.trim() !== "") {
     return removePicXUrl(item.summary);
   }

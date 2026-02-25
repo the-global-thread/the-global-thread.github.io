@@ -121,3 +121,12 @@ test('getSummaryText removes embedded pic.x.com URL', () => {
     'Foreign Minister Abbas Araghchi was scheduled to speak at the Council but his name was removed',
   );
 });
+
+test('getSummaryText prefers translation over summary', () => {
+  const summary = getSummaryText({
+    summary: 'English summary',
+    translation: 'خلاصه فارسی',
+  });
+
+  assert.equal(summary, 'خلاصه فارسی');
+});
