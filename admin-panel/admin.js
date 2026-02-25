@@ -86,7 +86,7 @@
       try {
         const payload = await response.json();
         if (payload?.error) message = payload.error;
-      } catch {}
+      } catch { }
       if (response.status === 401) {
         adminToken = "";
         sessionStorage.removeItem(TOKEN_STORAGE_KEY);
@@ -144,7 +144,7 @@
     if (!Array.isArray(items) || !items.length) {
       const row = document.createElement("tr");
       const cell = document.createElement("td");
-      cell.colSpan = 4;
+      cell.colSpan = 6;
       cell.textContent = "No items in database.";
       row.appendChild(cell);
       itemsBodyEl.appendChild(row);
@@ -171,10 +171,48 @@
       linkEl.textContent = "Open";
       linkCell.appendChild(linkEl);
 
+      const translationCell = document.createElement("td");
+      const hasTranslation = item.translation && item.translation.trim() !== "";
+      translationCell.textContent = hasTranslation ? "✓" : "✗";
+      translationCell.className = hasTranslation ? "translation-yes" : "translation-no";
+
+      const actionsCell = document.createElement("td");
+      if (!hasTranslation && item.summary && item.summary.trim() !== "") {
+        const translateBtn = document.createElement("button");
+        translateBtn.className = "translate-btn";
+        translateBtn.type = "button";
+        translateBtn.textContent = "Translate";
+        translateBtn.addEventListener("click", async function handleTranslate() {
+          try {
+            translateBtn.disabled = true;
+            translateBtn.textContent = "Translating...";
+            const payload = await requestJson(`/translate/item?id=${encodeURIComponent(item.id)}`, {
+              method: "POST",
+            });
+            if (payload.translated) {
+              translationCell.textContent = "✓";
+              translationCell.className = "translation-yes";
+              translateBtn.remove();
+            } else {
+              translateBtn.disabled = false;
+              translateBtn.textContent = "Translate";
+              alert("Translation failed. Check console for details.");
+            }
+          } catch (error) {
+            translateBtn.disabled = false;
+            translateBtn.textContent = "Translate";
+            alert(`Translation failed: ${error.message}`);
+          }
+        });
+        actionsCell.appendChild(translateBtn);
+      }
+
       row.appendChild(publishedCell);
       row.appendChild(sourceCell);
       row.appendChild(titleCell);
       row.appendChild(linkCell);
+      row.appendChild(translationCell);
+      row.appendChild(actionsCell);
       itemsBodyEl.appendChild(row);
     });
   }
