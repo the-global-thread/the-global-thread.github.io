@@ -99,6 +99,16 @@ button,
   font-size: 0.95rem;
 }
 
+.backfill-form input[type="number"] {
+  max-width: 180px;
+}
+
+.hint {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .status {
   min-height: 20px;
   margin: 10px 0 0;
@@ -189,5 +199,9 @@ button:disabled {
 
   .source-form {
     flex-direction: column;
+  }
+
+  .backfill-form input[type="number"] {
+    max-width: none;
   }
 }

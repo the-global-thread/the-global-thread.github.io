@@ -1,6 +1,7 @@
 (function bootstrapAdmin() {
   const TOKEN_STORAGE_KEY = "iran-news-admin-token";
   const ITEMS_PAGE_SIZE = 50;
+  const DEFAULT_BACKFILL_LIMIT = 300;
   const config = window.NewsApp?.config || {};
   const apiOrigin = new URL(config.API_URL || window.location.origin).origin;
   const adminBase = `${apiOrigin}/api/admin`;
@@ -12,6 +13,10 @@
   const formEl = document.getElementById("source-form");
   const sourceUrlEl = document.getElementById("source-url");
   const sourceStatusEl = document.getElementById("source-status");
+  const backfillFormEl = document.getElementById("backfill-form");
+  const backfillLimitEl = document.getElementById("backfill-limit");
+  const backfillSubmitEl = document.getElementById("backfill-submit");
+  const backfillStatusEl = document.getElementById("backfill-status");
   const sourcesListEl = document.getElementById("sources-list");
   const sourcesRefreshEl = document.getElementById("sources-refresh");
   const itemsRefreshEl = document.getElementById("items-refresh");
@@ -32,6 +37,11 @@
     sourceStatusEl.textContent = text;
   }
 
+  function setBackfillStatus(text) {
+    if (!backfillStatusEl) return;
+    backfillStatusEl.textContent = text;
+  }
+
   function setItemsStatus(text) {
     itemsStatusEl.textContent = text;
   }
@@ -39,6 +49,18 @@
   function setAuthPanelVisible(visible) {
     if (!authPanelEl) return;
     authPanelEl.style.display = visible ? "" : "none";
+  }
+
+  function setBackfillBusy(busy) {
+    if (!backfillSubmitEl) return;
+    backfillSubmitEl.disabled = busy;
+    backfillSubmitEl.textContent = busy ? "Running..." : "Run Backfill";
+  }
+
+  function parseBackfillLimit(raw) {
+    const parsed = Number.parseInt(String(raw || "").trim(), 10);
+    if (!Number.isFinite(parsed)) return DEFAULT_BACKFILL_LIMIT;
+    return Math.min(Math.max(parsed, 1), 300);
   }
 
   function updatePager(payload) {
@@ -188,6 +210,31 @@
     }
   }
 
+  async function runBackfill(limit) {
+    if (!adminToken) {
+      setBackfillStatus("Admin token required.");
+      return;
+    }
+    const safeLimit = parseBackfillLimit(limit);
+    if (backfillLimitEl) {
+      backfillLimitEl.value = String(safeLimit);
+    }
+
+    try {
+      setBackfillBusy(true);
+      setBackfillStatus(`Running backfill for up to ${safeLimit} row(s)...`);
+      const payload = await requestJson(`/translate/backfill?limit=${safeLimit}`, {
+        method: "POST",
+      });
+      setBackfillStatus(`Backfill done. Translated ${payload.translated || 0} row(s) (limit ${payload.limit || safeLimit}).`);
+      await loadItems(1);
+    } catch (error) {
+      setBackfillStatus(`Backfill failed: ${error.message}`);
+    } finally {
+      setBackfillBusy(false);
+    }
+  }
+
   formEl.addEventListener("submit", async function handleSourceSubmit(event) {
     event.preventDefault();
     if (!adminToken) {
@@ -225,11 +272,20 @@
       setAuthStatus("Admin unlocked for this tab session.");
       setAuthPanelVisible(false);
       setSourceStatus(`Loaded ${payload.sources?.length || 0} source(s).`);
+      setBackfillStatus("Ready. Choose row count and run.");
       await loadItems(1);
     } catch (error) {
       setAuthStatus(`Auth failed: ${error.message}`);
     }
   });
+
+  if (backfillFormEl) {
+    backfillFormEl.addEventListener("submit", async function handleBackfillSubmit(event) {
+      event.preventDefault();
+      const requested = backfillLimitEl ? backfillLimitEl.value : `${DEFAULT_BACKFILL_LIMIT}`;
+      await runBackfill(requested);
+    });
+  }
 
   sourcesRefreshEl.addEventListener("click", loadSources);
   itemsRefreshEl.addEventListener("click", function handleItemsRefresh() {
@@ -246,14 +302,17 @@
 
   if (adminToken) {
     setAuthPanelVisible(false);
+    setBackfillStatus("Ready. Choose row count and run.");
     loadSources();
     loadItems(1);
   } else {
     setAuthPanelVisible(true);
     setAuthStatus("Enter admin token to access this panel.");
     setSourceStatus("Admin token required.");
+    setBackfillStatus("Admin token required.");
     setItemsStatus("Admin token required.");
     itemsPrevEl.disabled = true;
     itemsNextEl.disabled = true;
+    setBackfillBusy(false);
   }
 })();
