@@ -130,3 +130,21 @@ test('getSummaryText prefers translation over summary', () => {
 
   assert.equal(summary, 'خلاصه فارسی');
 });
+
+test('getSummaryText cleans translated HTML and keeps translated text', () => {
+  const summary = getSummaryText({
+    summary: 'English summary',
+    translation: '<p>  خلاصه <strong>فارسی</strong> </p>',
+  });
+
+  assert.equal(summary, 'خلاصه فارسی');
+});
+
+test('getSummaryText falls back to summary when translation has no text', () => {
+  const summary = getSummaryText({
+    summary: 'English summary',
+    translation: '<p><br></p>',
+  });
+
+  assert.equal(summary, 'English summary');
+});

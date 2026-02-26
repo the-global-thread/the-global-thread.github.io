@@ -108,15 +108,25 @@ function formatRelativeTime(date) {
 }
 
 function getSummaryText(item) {
-  if (item.translation && item.translation.trim() !== "") {
-    return item.translation.trim();
+  const translation = cleanText(item.translation);
+  if (translation) {
+    return translation;
   }
 
-  if (item.summary && item.summary.trim() !== "") {
-    return removePicXUrl(item.summary);
+  const summary = cleanText(item.summary);
+  if (summary) {
+    return summary;
   }
 
   return "Open article";
+}
+
+function cleanText(value) {
+  const text = String(value || "")
+    .replace(/<[^>]*>/g, " ")
+    .trim();
+  if (!text) return "";
+  return removePicXUrl(text).replace(/\s+/g, " ").trim();
 }
 
 function extractPicXUrl(text) {
