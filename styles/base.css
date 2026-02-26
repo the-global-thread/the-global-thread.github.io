@@ -5,19 +5,25 @@
   --card: #f7f3ec;
   --ink: #151515;
   --muted: #505050;
+  --line: #cec8be;
+  --panel-bg: #f7f3ec;
+  --page-bg: #e7e2d9;
   --meta-bg: #efebe3;
   --meta-ink: #5f5a50;
   --image-bg: #e1ddd5;
 }
 
 :root[data-theme="dark"] {
-  --bg: #13161b;
-  --card: #1a1f27;
-  --ink: #e8edf5;
-  --muted: #9aa5b5;
-  --meta-bg: #111722;
-  --meta-ink: #8f9aae;
-  --image-bg: #222938;
+  --bg: #0c1118;
+  --card: #171f2c;
+  --ink: #edf2ff;
+  --muted: #9aa7bf;
+  --line: #29364d;
+  --panel-bg: rgba(23, 31, 44, 0.92);
+  --page-bg: radial-gradient(circle at top left, #132033 0%, #0c1118 50%);
+  --meta-bg: #111927;
+  --meta-ink: #9aa7bf;
+  --image-bg: #1b2739;
 }
 
 * {
@@ -26,7 +32,7 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--page-bg);
   color: var(--ink);
   font-family: "Source Sans 3", "Segoe UI", Arial, sans-serif;
 }
