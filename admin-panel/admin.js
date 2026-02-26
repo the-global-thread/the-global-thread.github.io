@@ -196,7 +196,8 @@
             } else {
               translateBtn.disabled = false;
               translateBtn.textContent = "Translate";
-              alert("Translation failed. Check console for details.");
+              const reason = payload.error ? ` (${payload.error})` : "";
+              alert(`Translation failed${reason}. Check worker logs for details.`);
             }
           } catch (error) {
             translateBtn.disabled = false;
