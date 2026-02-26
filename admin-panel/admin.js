@@ -1,7 +1,7 @@
 (function bootstrapAdmin() {
   const TOKEN_STORAGE_KEY = "iran-news-admin-token";
   const ITEMS_PAGE_SIZE = 50;
-  const DEFAULT_BACKFILL_LIMIT = 300;
+  const DEFAULT_BACKFILL_LIMIT = 50;
   const config = window.NewsApp?.config || {};
   const apiOrigin = new URL(config.API_URL || window.location.origin).origin;
   const adminBase = `${apiOrigin}/api/admin`;
@@ -69,6 +69,25 @@
     itemsPageIndicatorEl.textContent = `Page ${currentItemsPage} of ${totalItemsPages}`;
     itemsPrevEl.disabled = !payload?.hasPrev;
     itemsNextEl.disabled = !payload?.hasNext;
+  }
+
+  function formatRelativeDateShort(input) {
+    if (!input) return "";
+    const date = new Date(input);
+    if (Number.isNaN(date.valueOf())) return "";
+    const diffMs = Date.now() - date.getTime();
+    if (diffMs < 0) return "now";
+    const minute = 60 * 1000;
+    const hour = 60 * minute;
+    const day = 24 * hour;
+    const month = 30 * day;
+    const year = 365 * day;
+    if (diffMs < minute) return "now";
+    if (diffMs < hour) return `${Math.floor(diffMs / minute)}m`;
+    if (diffMs < day) return `${Math.floor(diffMs / hour)}h`;
+    if (diffMs < month) return `${Math.floor(diffMs / day)}d`;
+    if (diffMs < year) return `${Math.floor(diffMs / month)}mo`;
+    return `${Math.floor(diffMs / year)}y`;
   }
 
   async function requestJson(path, options = {}) {
@@ -144,7 +163,7 @@
     if (!Array.isArray(items) || !items.length) {
       const row = document.createElement("tr");
       const cell = document.createElement("td");
-      cell.colSpan = 6;
+      cell.colSpan = 5;
       cell.textContent = "No items in database.";
       row.appendChild(cell);
       itemsBodyEl.appendChild(row);
@@ -155,10 +174,11 @@
       const row = document.createElement("tr");
 
       const publishedCell = document.createElement("td");
-      publishedCell.textContent = item.published_at || "";
-
-      const sourceCell = document.createElement("td");
-      sourceCell.textContent = item.source || "";
+      const shortDate = formatRelativeDateShort(item.published_at);
+      publishedCell.textContent = shortDate || "";
+      if (item.published_at) {
+        publishedCell.title = item.published_at;
+      }
 
       const titleCell = document.createElement("td");
       titleCell.textContent = item.title || "";
@@ -172,12 +192,16 @@
       linkCell.appendChild(linkEl);
 
       const translationCell = document.createElement("td");
-      const hasTranslation = item.translation && item.translation.trim() !== "";
-      translationCell.textContent = hasTranslation ? "✓" : "✗";
-      translationCell.className = hasTranslation ? "translation-yes" : "translation-no";
+      const translationText = String(item.translation || "").trim();
+      const hasTranslation = translationText !== "";
+      translationCell.textContent = hasTranslation ? translationText : "—";
+      translationCell.className = hasTranslation ? "translation-text" : "translation-empty";
 
       const actionsCell = document.createElement("td");
-      if (!hasTranslation && item.summary && item.summary.trim() !== "") {
+      const hasTranslatableText =
+        String(item.summary || "").trim() !== "" ||
+        String(item.title || "").trim() !== "";
+      if (!hasTranslation && hasTranslatableText) {
         const translateBtn = document.createElement("button");
         translateBtn.className = "translate-btn";
         translateBtn.type = "button";
@@ -190,9 +214,7 @@
               method: "POST",
             });
             if (payload.translated) {
-              translationCell.textContent = "✓";
-              translationCell.className = "translation-yes";
-              translateBtn.remove();
+              await loadItems(currentItemsPage);
             } else {
               translateBtn.disabled = false;
               translateBtn.textContent = "Translate";
@@ -209,7 +231,6 @@
       }
 
       row.appendChild(publishedCell);
-      row.appendChild(sourceCell);
       row.appendChild(titleCell);
       row.appendChild(linkCell);
       row.appendChild(translationCell);

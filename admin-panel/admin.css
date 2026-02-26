@@ -171,12 +171,14 @@ td a {
   color: var(--accent);
 }
 
-.translation-yes {
-  color: #4ade80;
-  font-weight: 600;
+.translation-text {
+  max-width: 420px;
+  color: #d8e5ff;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
-.translation-no {
+.translation-empty {
   color: #f87171;
   font-weight: 600;
 }
