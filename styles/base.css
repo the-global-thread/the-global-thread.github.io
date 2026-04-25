@@ -20,7 +20,8 @@
   --muted: #9aa7bf;
   --line: #29364d;
   --panel-bg: rgba(23, 31, 44, 0.92);
-  --page-bg: radial-gradient(circle at top left, #132033 0%, #0c1118 50%);
+  /* --page-bg: radial-gradient(circle at top left, #132033 0%, #0c1118 50%); */
+  --page-bg: radial-gradient(circle at top left, #132033 0%, #0c1118 50%, #0c1118 100%);
   --meta-bg: #111927;
   --meta-ink: #9aa7bf;
   --image-bg: #1b2739;
